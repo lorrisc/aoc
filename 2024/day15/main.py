@@ -22,17 +22,14 @@ def afficher_carte(carte):
         print("".join(ligne))
     print("\n")
 
-# afficher_carte(carte)
-
 def trouver_robot(carte):
     for i, ligne in enumerate(carte):
         for j, col in enumerate(ligne):
             if carte[i][j] == "@":
                 return i, j
             
-pos_robot_x, pos_robot_y = trouver_robot(carte)
 
-def deplacer_element(carte, element, current_x, current_y, increment_x, increment_y):
+def deplacer_element_p1(carte, element, current_x, current_y, increment_x, increment_y):
     new_x = current_x + increment_x
     new_y = current_y + increment_y
 
@@ -42,9 +39,9 @@ def deplacer_element(carte, element, current_x, current_y, increment_x, incremen
     if carte[new_x][new_y] == "#":
         return False
     elif carte[new_x][new_y] == "O":
-        success = deplacer_element(carte, "O", new_x, new_y, increment_x, increment_y)
+        success = deplacer_element_p1(carte, "O", new_x, new_y, increment_x, increment_y)
         if success:
-            return deplacer_element(carte, element, current_x, current_y, increment_x, increment_y)
+            return deplacer_element_p1(carte, element, current_x, current_y, increment_x, increment_y)
         else:
             return False
     elif carte[new_x][new_y] == ".":
@@ -57,19 +54,7 @@ def deplacer_element(carte, element, current_x, current_y, increment_x, incremen
 
     return False
 
-for mvt in mouvements: 
-    if mvt == "^":
-        deplacer_element(carte, "@", pos_robot_x, pos_robot_y, - 1, 0)
-    elif mvt == "v":
-        deplacer_element(carte, "@", pos_robot_x, pos_robot_y, 1, 0)
-    elif mvt == "<":
-        deplacer_element(carte, "@", pos_robot_x, pos_robot_y, 0, - 1)
-    elif mvt == ">":
-        deplacer_element(carte, "@", pos_robot_x, pos_robot_y, 0, 1)
-
-    # afficher_carte(carte)
-
-def get_sum_coordinates(carte):
+def get_sum_coordinates_p1(carte):
     total = 0
     for i, row in enumerate(carte):
         for j, col in enumerate(row):
@@ -77,4 +62,25 @@ def get_sum_coordinates(carte):
                 total += 100 * i + j
     return total
 
-print(get_sum_coordinates(carte))
+
+def part1():
+    carte_p1 = [row.copy() for row in carte]
+    x, y = trouver_robot(carte_p1)
+
+    global pos_robot_x, pos_robot_y
+    pos_robot_x, pos_robot_y = x, y
+
+    for mvt in mouvements:
+        if mvt == "^":
+            deplacer_element_p1(carte_p1, "@", pos_robot_x, pos_robot_y, -1, 0)
+        elif mvt == "v":
+            deplacer_element_p1(carte_p1, "@", pos_robot_x, pos_robot_y, 1, 0)
+        elif mvt == "<":
+            deplacer_element_p1(carte_p1, "@", pos_robot_x, pos_robot_y, 0, -1)
+        elif mvt == ">":
+            deplacer_element_p1(carte_p1, "@", pos_robot_x, pos_robot_y, 0, 1)
+
+    print("PARTIE 1 - SOMME COORDONNEES :")
+    print(get_sum_coordinates_p1(carte_p1))
+
+part1()
