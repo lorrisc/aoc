@@ -42,6 +42,34 @@ def has_adjacent_special_character(lines, row_idx, start_col, end_col):
                 return True
     return False
 
+# Retourne les nombres adjacents à un engrenage situé à (row_idx, col_idx).
+def find_adjacent_numbers(lines, row_idx, col_idx):
+    found = []
+    visited = set()
+
+    for i in range(row_idx - 1, row_idx + 2):
+        if i < 0 or i >= len(lines):
+            continue
+        j = col_idx - 1
+        while j <= col_idx + 1:
+            if j < 0 or j >= len(lines[i]):
+                j += 1
+                continue
+            if lines[i][j].isdigit() and (i, j) not in visited:
+                # Trouver le début du nombre
+                start = j
+                while start > 0 and lines[i][start - 1].isdigit():
+                    start -= 1
+                number, real_start, real_end = extract_number_from_pos(lines[i], start)
+                found.append(number)
+                # Marquer tous les indices du nombre comme visités
+                for k in range(real_start, real_end + 1):
+                    visited.add((i, k))
+                j = real_end + 1
+            else:
+                j += 1
+    return found
+
 
 valid_numbers = []
 
@@ -57,3 +85,15 @@ for i, line in enumerate(lines):
             j += 1
     
 print(f"PARTIE 1 : {sum(valid_numbers)}")
+
+gear_ratios = []
+for idx_line, line in enumerate(lines):
+    for idx_col, col in enumerate(line):
+        if col == "*":
+            adjacent_numbers = find_adjacent_numbers(lines, idx_line, idx_col)
+            if len(adjacent_numbers) == 2:
+                ratio = adjacent_numbers[0] * adjacent_numbers[1]
+                gear_ratios.append(ratio)
+
+
+print(f"PARTIE 2 : {sum(gear_ratios)}")
